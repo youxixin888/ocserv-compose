@@ -1,0 +1,32 @@
+version: "3"
+services:
+  radius:
+    image: ocserv
+    container_name: ocserv
+    restart: always
+    privileged: true
+    depends_on:
+      - "radius-mysql" 
+    network_mode: "host"
+    environment:
+      - MYSQL_HOST=127.0.0.1
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=radius
+      - MYSQL_USER=radius
+      - MYSQL_PASSWORD=dalodbpass
+    volumes:
+      - ./certs:/opt/certs
+      - ./ocserv:/etc/ocserv
+      - ./radcli/servers:/etc/radcli/servers
+  radius-mysql:
+    image: mariadb:10.1.41
+    container_name: radius-mysql
+    restart: always
+    network_mode: "host"
+    environment:
+      - MYSQL_DATABASE=radius
+      - MYSQL_USER=radius
+      - MYSQL_PASSWORD=dalodbpass
+      - MYSQL_ROOT_PASSWORD=dalorootpass
+    volumes:
+      - "./radius-mysql:/var/lib/mysql"
